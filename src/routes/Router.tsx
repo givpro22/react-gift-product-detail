@@ -8,7 +8,7 @@ import AppLayout from "@/components/layout/AppLayout";
 import RequireAuth from "@/components/auth/RequireAuth";
 import ThemeProductsPage from "@/pages/ThemeProductsPage";
 
-const ROUTES = {
+export const ROUTES = {
   ROOT: "/",
   LOGIN: "/login",
   MYPAGE: "/my",
