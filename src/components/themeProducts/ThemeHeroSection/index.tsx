@@ -1,3 +1,6 @@
+import { fetchThemeInfo } from "@/api/themes";
+import LoadingPage from "@/pages/LoadingPage";
+import { whiteSectionStyle } from "@/styles/CommonStyles";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   sectionStyle,
@@ -5,37 +8,38 @@ import {
   titleStyle,
   descriptionStyle,
 } from "./styles";
-import { useRead } from "@/hooks/useRead";
-import { fetchThemeInfo } from "@/api/themes";
+import { useQuery } from "@tanstack/react-query";
+import type { AxiosError } from "axios";
 import { useEffect } from "react";
-import { toast } from "react-toastify";
-import { ROUTES } from "@/routes/Router";
 
 function ThemeHeroSection() {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
 
-  const { data, loading, error } = useRead({
-    fetch: fetchThemeInfo,
-    initFetchParams: themeId || "",
+  const { data, isError, isLoading, error } = useQuery({
+    queryKey: ["themeInfo", themeId],
+    queryFn: () => fetchThemeInfo(themeId!),
+    enabled: !!themeId,
   });
 
   useEffect(() => {
-    if (error) {
-      toast.error(error);
-      navigate(ROUTES.ROOT);
+    if (!error) return;
+
+    const axiosError = error as AxiosError;
+    if (axiosError.response?.status === 404) {
+      navigate("/home");
     }
   }, [error, navigate]);
 
-  if (!data || loading) return null;
-
-  const { backgroundColor, name, title, description } = data.data;
+  if (!data) return null;
+  if (isLoading) return <LoadingPage css={whiteSectionStyle()} />;
+  if (isError) return null;
 
   return (
-    <section css={sectionStyle(backgroundColor)}>
-      <p css={nameStyle}>{name}</p>
-      <h2 css={titleStyle}>{title}</h2>
-      <p css={descriptionStyle}>{description}</p>
+    <section css={sectionStyle(data.backgroundColor)}>
+      <p css={nameStyle}>{data.name}</p>
+      <h2 css={titleStyle}>{data.title}</h2>
+      <p css={descriptionStyle}>{data.description}</p>
     </section>
   );
 }

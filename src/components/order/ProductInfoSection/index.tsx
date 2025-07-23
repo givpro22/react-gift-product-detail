@@ -10,30 +10,29 @@ import {
   priceStyle,
   priceValueStyle,
 } from "./styles";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { useOrder } from "@/contexts/OrderContext";
 import { fetchProductSummary, type ProductSummary } from "@/api/products";
+import { useQuery } from "@tanstack/react-query";
 
 function ProductInfoSection() {
   const { productId } = useParams();
   const navigate = useNavigate();
-  const [product, setProduct] = useState<ProductSummary | null>(null);
 
   const { setProductPrice, setProductName } = useOrder();
 
+  const { data: product, error } = useQuery<ProductSummary>({
+    queryKey: ["productSummary", productId],
+    queryFn: () => fetchProductSummary(productId!),
+    enabled: !!productId,
+  });
+
   useEffect(() => {
-    if (!productId) return;
-    const fetchData = async () => {
-      try {
-        const data = await fetchProductSummary(productId);
-        setProduct(data);
-      } catch {
-        toast.error("상품 정보를 불러오지 못했습니다.");
-        navigate("/");
-      }
-    };
-    fetchData();
-  }, [productId, navigate]);
+    if (error) {
+      toast.error("상품 정보를 불러오지 못했습니다.");
+      navigate("/");
+    }
+  }, [error, navigate]);
 
   useEffect(() => {
     if (product) {

@@ -1,6 +1,4 @@
-import type { ApiErrorResponse } from "@/hooks/useRead";
 import { apiClient } from "./client";
-import type { AxiosResponse } from "axios";
 
 export interface ThemeType {
   themeId: number;
@@ -30,16 +28,13 @@ export interface ThemeProductResponse {
   hasMoreList: boolean;
 }
 
-type ThemeBaseData = {
-  themeId: string;
+export interface ThemeInfo {
+  themeId: number;
   name: string;
-};
-
-export type ThemeInfo = ThemeBaseData & {
   title: string;
   description: string;
   backgroundColor: string;
-};
+}
 
 export async function fetchThemes(): Promise<ThemeType[]> {
   const response = await apiClient.get("/api/themes");
@@ -57,8 +52,7 @@ export async function fetchThemeProducts(
   return response.data.data;
 }
 
-export async function fetchThemeInfo(
-  themeId: string
-): Promise<AxiosResponse<{ data: ThemeInfo }, ApiErrorResponse>> {
-  return await apiClient.get(`/api/themes/${themeId}/info`);
+export async function fetchThemeInfo(themeId: string): Promise<ThemeInfo> {
+  const response = await apiClient.get(`/api/themes/${themeId}/info`);
+  return response.data.data;
 }

@@ -6,17 +6,21 @@ import { AuthProvider } from "./contexts/AuthContext";
 import { OrderProvider } from "./contexts/OrderContext";
 import { OrderFormProvider } from "./contexts/OrderFormContext";
 import App from "./App";
+import { QueryClientProvider } from "@tanstack/react-query";
+import { queryClient } from "./utils/query";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <OrderFormProvider>
-      <OrderProvider>
-        <AuthProvider>
-          <ThemeProvider theme={theme}>
-            <App />
-          </ThemeProvider>
-        </AuthProvider>
-      </OrderProvider>
-    </OrderFormProvider>
+    <QueryClientProvider client={queryClient}>
+      <OrderFormProvider>
+        <OrderProvider>
+          <AuthProvider>
+            <ThemeProvider theme={theme}>
+              <App />
+            </ThemeProvider>
+          </AuthProvider>
+        </OrderProvider>
+      </OrderFormProvider>
+    </QueryClientProvider>
   </React.StrictMode>
 );
