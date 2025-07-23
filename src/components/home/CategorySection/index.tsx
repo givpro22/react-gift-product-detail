@@ -8,10 +8,9 @@ import {
 } from "./styles";
 import { whiteSectionStyle } from "@/styles/CommonStyles";
 import { fetchThemes } from "@/api/themes";
-import LoadingPage from "@/pages/LoadingPage";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export default function CategorySection() {
   const theme = useTheme();
@@ -19,7 +18,7 @@ export default function CategorySection() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const { data, isError, isLoading } = useQuery({
+  const { data } = useSuspenseQuery({
     queryKey: ["themes"],
     queryFn: fetchThemes,
   });
@@ -31,9 +30,6 @@ export default function CategorySection() {
       navigate("/login", { state: { from: `/themes/${themeId}` } });
     }
   };
-
-  if (isLoading) return <LoadingPage css={whiteSectionStyle()} />;
-  if (isError || !data) return null;
 
   return (
     <div css={whiteSectionStyle()}>
