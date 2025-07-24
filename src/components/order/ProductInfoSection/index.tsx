@@ -12,8 +12,7 @@ import {
 } from "./styles";
 import { useEffect } from "react";
 import { useOrder } from "@/contexts/OrderContext";
-import { fetchProductSummary, type ProductSummary } from "@/api/products";
-import { useQuery } from "@tanstack/react-query";
+import { useProductSummaryQuery } from "@/api/query";
 
 function ProductInfoSection() {
   const { productId } = useParams();
@@ -21,11 +20,7 @@ function ProductInfoSection() {
 
   const { setProductPrice, setProductName } = useOrder();
 
-  const { data: product, error } = useQuery<ProductSummary>({
-    queryKey: ["productSummary", productId],
-    queryFn: () => fetchProductSummary(productId!),
-    enabled: !!productId,
-  });
+  const { data: product, error } = useProductSummaryQuery(productId);
 
   useEffect(() => {
     if (error) {

@@ -1,4 +1,3 @@
-import { fetchThemeInfo } from "@/api/themes";
 import LoadingPage from "@/pages/LoadingPage";
 import { whiteSectionStyle } from "@/styles/CommonStyles";
 import { useParams, useNavigate } from "react-router-dom";
@@ -8,26 +7,23 @@ import {
   titleStyle,
   descriptionStyle,
 } from "./styles";
-import { useQuery } from "@tanstack/react-query";
 import type { AxiosError } from "axios";
 import { useEffect } from "react";
+import { useThemeInfoQuery } from "@/api/query";
+import { ROUTES } from "@/routes/Router";
 
 function ThemeHeroSection() {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
 
-  const { data, isError, isLoading, error } = useQuery({
-    queryKey: ["themeInfo", themeId],
-    queryFn: () => fetchThemeInfo(themeId!),
-    enabled: !!themeId,
-  });
+  const { data, isError, isLoading, error } = useThemeInfoQuery(themeId);
 
   useEffect(() => {
     if (!error) return;
 
     const axiosError = error as AxiosError;
     if (axiosError.response?.status === 404) {
-      navigate("/home");
+      navigate(ROUTES.ROOT);
     }
   }, [error, navigate]);
 
