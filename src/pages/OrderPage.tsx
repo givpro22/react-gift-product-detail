@@ -11,9 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useOrder } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cardData } from "@/mocks/orderCardData";
-import type { AxiosError } from "axios";
-import { fetchOrderApi } from "@/api/order";
-import { useMutation } from "@tanstack/react-query";
+import { useOrderMutation } from "@/api/mutations";
 
 function OrderPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -38,24 +36,7 @@ function OrderPage() {
     handleSubmit,
     formState: { errors },
   } = methods;
-  const mutation = useMutation({
-    mutationFn: fetchOrderApi,
-    onSuccess: (_, variables) => {
-      alert(
-        `주문이 완료되었습니다.\n` +
-          `상품명: ${productName}\n` +
-          `구매 수량: ${quantity}\n` +
-          `발신자 이름: ${variables.ordererName}\n` +
-          `메시지: ${variables.message}`
-      );
-      navigate("/");
-    },
-    onError: (error: AxiosError) => {
-      if (error.response?.status === 401) {
-        navigate("/login");
-      }
-    },
-  });
+  const mutation = useOrderMutation(productName, quantity, navigate);
 
   const onSubmit = (data: FormValues) => {
     mutation.mutate({

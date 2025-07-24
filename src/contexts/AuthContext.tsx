@@ -1,4 +1,4 @@
-import { fetchLoginApi, type UserInfo } from "@/api/auth";
+import { type UserInfo } from "@/api/auth";
 import {
   createContext,
   useContext,
@@ -7,7 +7,7 @@ import {
   useCallback,
 } from "react";
 import type { ReactNode } from "react";
-import { useMutation } from "@tanstack/react-query";
+import { useLoginMutation } from "@/api/mutations";
 
 type AuthContextType = {
   user: UserInfo | null;
@@ -23,17 +23,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return stored ? JSON.parse(stored) : null;
   });
 
-  const { mutateAsync } = useMutation({
-    mutationFn: fetchLoginApi,
-    onSuccess: (result) => {
-      sessionStorage.setItem("userInfo", JSON.stringify(result));
-      setUser(result);
-    },
-  });
+  const { mutateAsync } = useLoginMutation(setUser);
 
-  const login = useCallback(async (email: string, password: string) => {
-    return mutateAsync({ email, password });
-  }, []);
+  const login = useCallback(
+    async (email: string, password: string) => {
+      return mutateAsync({ email, password });
+    },
+    [mutateAsync]
+  );
 
   const logout = useCallback(() => {
     sessionStorage.removeItem("userInfo");
