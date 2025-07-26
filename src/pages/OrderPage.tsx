@@ -11,8 +11,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useOrder } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cardData } from "@/mocks/orderCardData";
-import type { AxiosError } from "axios";
-import { fetchOrderApi } from "@/api/order";
+import { useOrderMutation } from "@/api/mutations";
 
 function OrderPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -37,35 +36,20 @@ function OrderPage() {
     handleSubmit,
     formState: { errors },
   } = methods;
-  const onSubmit = async (data: FormValues) => {
-    try {
-      await fetchOrderApi({
-        productId: Number(params.productId),
-        message: data.message,
-        messageCardId: selectedCardId,
-        ordererName: data.sender,
-        receivers: data.receivers.map((r) => ({
-          name: r.name,
-          phoneNumber: r.phone,
-          quantity: r.quantity,
-        })),
-      });
-      alert(
-        `주문이 완료되었습니다.\n` +
-          `상품명: ${productName}\n` +
-          `구매 수량: ${quantity}\n` +
-          `발신자 이름: ${data.sender}\n` +
-          `메시지: ${data.message}`
-      );
-      navigate("/");
-    } catch (error: unknown) {
-      const axiosError = error as AxiosError;
+  const mutation = useOrderMutation(productName, quantity, navigate);
 
-      if (axiosError.response?.status === 401) {
-        navigate("/login");
-        return;
-      }
-    }
+  const onSubmit = (data: FormValues) => {
+    mutation.mutate({
+      productId: Number(params.productId),
+      message: data.message,
+      messageCardId: selectedCardId,
+      ordererName: data.sender,
+      receivers: data.receivers.map((r) => ({
+        name: r.name,
+        phoneNumber: r.phone,
+        quantity: r.quantity,
+      })),
+    });
   };
 
   return (

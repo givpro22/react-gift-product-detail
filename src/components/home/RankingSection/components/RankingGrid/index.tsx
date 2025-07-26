@@ -1,5 +1,4 @@
 import { useTheme } from "@emotion/react";
-import { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
 import {
   gridStyle,
@@ -13,6 +12,8 @@ import {
 import { useAuth } from "@/contexts/AuthContext";
 import { fetchRankingProducts, type Product } from "@/api/products";
 import LoadingPage from "@/pages/LoadingPage";
+import { useQuery } from "@tanstack/react-query";
+import { AxiosError } from "axios";
 
 export default function RankingGrid() {
   const theme = useTheme();
@@ -20,30 +21,17 @@ export default function RankingGrid() {
   const navigate = useNavigate();
   const { user } = useAuth();
 
-  const [products, setProducts] = useState<Product[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
   const mainFilter = searchParams.get("main");
   const subFilter = searchParams.get("sub");
-
-  useEffect(() => {
-    const fetchProducts = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const result = await fetchRankingProducts({ mainFilter, subFilter });
-        setProducts(result);
-      } catch {
-        setError("상품 랭킹을 불러오는 데 실패했습니다.");
-        setProducts([]);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    fetchProducts();
-  }, [mainFilter, subFilter]);
+  const {
+    data = [],
+    isError,
+    isLoading,
+    error,
+  } = useQuery<Product[]>({
+    queryKey: ["rankingProducts", mainFilter, subFilter],
+    queryFn: () => fetchRankingProducts({ mainFilter, subFilter }),
+  });
 
   const handleItemClick = (id: number) => {
     if (user) {
@@ -53,19 +41,23 @@ export default function RankingGrid() {
     }
   };
 
-  if (loading) {
+  if (isLoading) {
     return <LoadingPage css={loadingContainerStyle(theme)} />;
   }
 
-  if (error) {
+  if (isError) {
     return (
       <div css={emptyResultsStyle(theme)}>
-        <p>{error}</p>
+        <p>
+          {error instanceof AxiosError
+            ? error.response?.data?.message || "서버 에러 발생"
+            : "알 수 없는 에러가 발생했습니다."}
+        </p>
       </div>
     );
   }
 
-  if (products.length === 0) {
+  if (data.length === 0) {
     return (
       <div css={emptyResultsStyle(theme)}>
         <p>선물 랭킹 상품이 없습니다</p>
@@ -75,7 +67,7 @@ export default function RankingGrid() {
 
   return (
     <div css={gridStyle(theme)}>
-      {products.map((item, index) => (
+      {data.map((item, index) => (
         <div
           key={item.id}
           css={itemStyle}

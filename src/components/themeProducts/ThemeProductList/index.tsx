@@ -1,5 +1,5 @@
-import { fetchThemeProducts, type ThemeProduct } from "@/api/themes";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { fetchThemeProducts } from "@/api/themes";
+import { useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import {
   sectionStyle,
@@ -11,51 +11,39 @@ import {
   priceStyle,
 } from "./styles";
 import NotFoundPage from "@/pages/NotFoundPage";
+import { useInfiniteQuery } from "@tanstack/react-query";
 
 function ThemeProductList() {
   const { themeId } = useParams<{ themeId: string }>();
-  const [error, setError] = useState<string | null>(null);
-  const [products, setProducts] = useState<ThemeProduct[]>([]);
-  const [cursor, setCursor] = useState(0);
-  const [hasMore, setHasMore] = useState(true);
-  const [isFetching, setIsFetching] = useState(false);
   const observerRef = useRef<HTMLDivElement | null>(null);
-  const loadMoreProducts = useCallback(async () => {
-    if (!themeId || !hasMore || isFetching) return;
 
-    setIsFetching(true);
-    try {
-      const data = await fetchThemeProducts(themeId, cursor);
-      setProducts((prev) => {
-        const existingIds = new Set(prev.map((item) => item.id));
-        const newItems = data.list.filter((item) => !existingIds.has(item.id));
-        return [...prev, ...newItems];
-      });
-      setCursor(data.cursor);
-      setHasMore(data.hasMoreList);
-    } catch {
-      setError("테마제품 정보를 불러오는 데 실패했습니다.");
-    } finally {
-      setIsFetching(false);
-    }
-  }, [themeId, hasMore, isFetching, cursor]);
+  const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
+    useInfiniteQuery({
+      queryKey: ["themeProducts", themeId],
+      queryFn: ({ pageParam = 0 }) =>
+        fetchThemeProducts(themeId || "", pageParam),
+      initialPageParam: 0,
+      getNextPageParam: (lastPage) =>
+        lastPage.hasMoreList ? lastPage.cursor : undefined,
+      enabled: !!themeId,
+    });
 
   useEffect(() => {
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && hasMore) {
-          loadMoreProducts();
+        if (entry.isIntersecting && hasNextPage && !isFetchingNextPage) {
+          fetchNextPage();
         }
       },
       { threshold: 1.0 }
     );
 
-    const currentElement = observerRef.current;
-    if (currentElement) observer.observe(currentElement);
+    const current = observerRef.current;
+    if (current) observer.observe(current);
     return () => {
-      if (currentElement) observer.unobserve(currentElement);
+      if (current) observer.unobserve(current);
     };
-  }, [hasMore, loadMoreProducts]);
+  }, [hasNextPage, fetchNextPage, isFetchingNextPage]);
 
   if (error) {
     return <NotFoundPage />;
@@ -63,18 +51,20 @@ function ThemeProductList() {
   return (
     <section css={sectionStyle}>
       <div css={gridStyle}>
-        {products.map((item) => (
-          <div key={item.id} css={cardStyle}>
-            <img src={item.imageURL} alt={item.name} css={imageStyle} />
-            <div css={brandStyle}>{item.brandInfo.name}</div>
-            <div css={nameStyle}>{item.name}</div>
-            <div css={priceStyle}>
-              {item.price.sellingPrice.toLocaleString()} 원
+        {data?.pages.flatMap((page) =>
+          page.list.map((item) => (
+            <div key={item.id} css={cardStyle}>
+              <img src={item.imageURL} alt={item.name} css={imageStyle} />
+              <div css={brandStyle}>{item.brandInfo.name}</div>
+              <div css={nameStyle}>{item.name}</div>
+              <div css={priceStyle}>
+                {item.price.sellingPrice.toLocaleString()} 원
+              </div>
             </div>
-          </div>
-        ))}
+          ))
+        )}
       </div>
-      {hasMore && <div ref={observerRef} style={{ height: 1 }} />}
+      {hasNextPage && <div ref={observerRef} style={{ height: 1 }} />}
     </section>
   );
 }

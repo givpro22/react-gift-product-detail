@@ -1,4 +1,4 @@
-import { fetchLoginApi, type UserInfo } from "@/api/auth";
+import { type UserInfo } from "@/api/auth";
 import {
   createContext,
   useContext,
@@ -7,10 +7,11 @@ import {
   useCallback,
 } from "react";
 import type { ReactNode } from "react";
+import { useLoginMutation } from "@/api/mutations";
 
 type AuthContextType = {
   user: UserInfo | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<unknown>;
   logout: () => void;
 };
 
@@ -21,19 +22,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const stored = sessionStorage.getItem("userInfo");
     return stored ? JSON.parse(stored) : null;
   });
-  const [loginError, setLoginError] = useState(false);
 
-  const login = useCallback(async (email: string, password: string) => {
-    try {
-      const result = await fetchLoginApi(email, password);
-      sessionStorage.setItem("userInfo", JSON.stringify(result));
-      setUser(result);
-      setLoginError(false);
-    } catch (error) {
-      setLoginError(true);
-      throw error;
-    }
-  }, []);
+  const { mutateAsync } = useLoginMutation(setUser);
+
+  const login = useCallback(
+    async (email: string, password: string) => {
+      return mutateAsync({ email, password });
+    },
+    [mutateAsync]
+  );
 
   const logout = useCallback(() => {
     sessionStorage.removeItem("userInfo");
@@ -41,8 +38,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const value = useMemo(() => {
-    return { user, login, logout, loginError };
-  }, [user, login, logout, loginError]);
+    return { user, login, logout };
+  }, [user, login, logout]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

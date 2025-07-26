@@ -5,7 +5,13 @@ export interface UserInfo {
   email: string;
   name: string;
 }
-export async function fetchLoginApi(email: string, password: string) {
+export async function fetchLoginApi({
+  email,
+  password,
+}: {
+  email: string;
+  password: string;
+}) {
   const response = await apiClient.post<{ data: UserInfo }>("/api/login", {
     email,
     password,
