@@ -3,6 +3,7 @@ import { fetchThemeInfo } from "./themes";
 import { fetchProductSummary } from "./products";
 import type { ProductSummary } from "./products";
 import type { AxiosError } from "axios";
+import { fetchProductData } from "./orderDetail";
 
 export const useThemeInfoQuery = (themeId: string | undefined) => {
   return useQuery({
@@ -19,3 +20,19 @@ export const useProductSummaryQuery = (productId: string | undefined) => {
     enabled: !!productId,
   });
 };
+
+export const useProductBasicSummary = (productId: string | undefined) => {
+  return useQuery({
+    queryKey: ["productDetail", productId],
+    queryFn: () => fetchProductData(productId!),
+    enabled: !!productId,
+  });
+};
+
+// export const useProductTabSection = (productId: string | undefined) => {
+//   return useQuery({
+//     queryKey: ["productDetail", productId],
+//     queryFn: () => fetchProductData(productId!),
+//     enabled: !!productId,
+//   });
+// };

@@ -10,7 +10,7 @@ export async function fetchProductData(
   productId: string
 ): Promise<ProductData> {
   const response = await apiClient.get(`/api/products/${productId}`);
-  return response.data.data;
+  return response.data;
 }
 
 export async function fetchProductDetailData(

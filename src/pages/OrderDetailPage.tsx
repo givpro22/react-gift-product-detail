@@ -1,5 +1,5 @@
 import ProductActionBar from "@/components/productDetail/ProductActionBar";
-import ProductSummary from "@/components/productDetail/ProductSummary";
+import ProductBasicSummary from "@/components/productDetail/ProductBasicSummary";
 import ProductTabSection from "@/components/productDetail/ProductTabSection";
 import { useParams } from "react-router-dom";
 
@@ -8,7 +8,7 @@ function OrderDetailPage() {
 
   return (
     <>
-      <ProductSummary />
+      <ProductBasicSummary />
       <ProductTabSection />
       <ProductActionBar />
     </>
