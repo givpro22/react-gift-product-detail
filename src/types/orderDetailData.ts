@@ -19,7 +19,7 @@ export interface ProductData {
 export interface ProductDetailData {
   data: {
     description: string;
-    announcement: {
+    announcements: {
       name: string;
       value: string;
       displayOrder: number;
@@ -27,14 +27,13 @@ export interface ProductDetailData {
   };
 }
 
-export interface ProductHighlightReview {
+export interface ProductWishCount {
   data: {
     wishCount: number;
     isWished: boolean;
   };
 }
-
-export interface ProductWishCount {
+export interface ProductHighlightReview {
   data: {
     totalCount: number;
     reviews: {

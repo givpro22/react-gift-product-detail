@@ -17,7 +17,7 @@ export async function fetchProductDetailData(
   productId: string
 ): Promise<ProductDetailData> {
   const response = await apiClient.get(`/api/products/${productId}/detail`);
-  return response.data.data;
+  return response.data;
 }
 
 export async function fetchProductHighlightReview(
@@ -26,7 +26,7 @@ export async function fetchProductHighlightReview(
   const response = await apiClient.get(
     `/api/products/${productId}/highlight-review`
   );
-  return response.data.data;
+  return response.data;
 }
 
 export async function fetchProductWishCount(

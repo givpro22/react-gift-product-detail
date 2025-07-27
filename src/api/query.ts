@@ -1,9 +1,14 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQueries, useQuery } from "@tanstack/react-query";
 import { fetchThemeInfo } from "./themes";
 import { fetchProductSummary } from "./products";
 import type { ProductSummary } from "./products";
 import type { AxiosError } from "axios";
-import { fetchProductData } from "./orderDetail";
+import {
+  fetchProductData,
+  fetchProductDetailData,
+  fetchProductHighlightReview,
+  fetchProductWishCount,
+} from "./orderDetail";
 
 export const useThemeInfoQuery = (themeId: string | undefined) => {
   return useQuery({
@@ -29,10 +34,18 @@ export const useProductBasicSummary = (productId: string | undefined) => {
   });
 };
 
-// export const useProductTabSection = (productId: string | undefined) => {
-//   return useQuery({
-//     queryKey: ["productDetail", productId],
-//     queryFn: () => fetchProductData(productId!),
-//     enabled: !!productId,
-//   });
-// };
+export const useProductTabSection = (productId: string) => {
+  return useQueries({
+    queries: [
+      {
+        queryKey: ["product", productId],
+        queryFn: () => fetchProductDetailData(productId),
+      },
+
+      {
+        queryKey: ["highlightReview", productId],
+        queryFn: () => fetchProductHighlightReview(productId),
+      },
+    ],
+  });
+};
