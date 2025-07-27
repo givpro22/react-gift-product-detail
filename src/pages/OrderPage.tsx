@@ -16,7 +16,7 @@ import { useOrderMutation } from "@/api/mutations";
 function OrderPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
-  const params = useParams();
+  const { productId } = useParams();
   const { user } = useAuth();
   const { productName, quantity } = useOrder();
   const [selectedCardId, setSelectedCardId] = useState<string>(
@@ -40,7 +40,7 @@ function OrderPage() {
 
   const onSubmit = (data: FormValues) => {
     mutation.mutate({
-      productId: Number(params.productId),
+      productId: Number(productId),
       message: data.message,
       messageCardId: selectedCardId,
       ordererName: data.sender,

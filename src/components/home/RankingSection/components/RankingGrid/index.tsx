@@ -32,7 +32,7 @@ export default function RankingGrid() {
   });
 
   const handleItemClick = (id: number) => {
-    navigate(`/order/${id}`);
+    navigate(`/product/${id}`);
   };
 
   if (isLoading) {
