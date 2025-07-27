@@ -9,7 +9,6 @@ import {
   emptyResultsStyle,
   loadingContainerStyle,
 } from "./styles";
-import { useAuth } from "@/contexts/AuthContext";
 import { fetchRankingProducts, type Product } from "@/api/products";
 import LoadingPage from "@/pages/LoadingPage";
 import { useQuery } from "@tanstack/react-query";
@@ -19,7 +18,6 @@ export default function RankingGrid() {
   const theme = useTheme();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const mainFilter = searchParams.get("main");
   const subFilter = searchParams.get("sub");
@@ -34,11 +32,7 @@ export default function RankingGrid() {
   });
 
   const handleItemClick = (id: number) => {
-    if (user) {
-      navigate(`/order/${id}`);
-    } else {
-      navigate("/login", { state: { from: `/order/${id}` } });
-    }
+    navigate(`/order/${id}`);
   };
 
   if (isLoading) {

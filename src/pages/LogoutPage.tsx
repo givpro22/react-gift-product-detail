@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/contexts/AuthContext";
+import { ROUTES } from "@/routes/Router";
 
 export default function LogoutPage() {
   const { logout, user } = useAuth();
@@ -7,7 +8,7 @@ export default function LogoutPage() {
 
   const handleLogout = () => {
     logout();
-    navigate("/login", { replace: true });
+    navigate(ROUTES.LOGIN, { replace: true });
   };
 
   return (

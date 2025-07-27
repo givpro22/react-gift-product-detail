@@ -4,6 +4,7 @@ import { fetchLoginApi } from "@/api/auth";
 import type { AxiosError } from "axios";
 import type { NavigateFunction } from "react-router-dom";
 import type { UserInfo } from "@/api/auth";
+import { ROUTES } from "@/routes/Router";
 
 export const useOrderMutation = (
   productName: string,
@@ -20,11 +21,11 @@ export const useOrderMutation = (
           `발신자 이름: ${variables.ordererName}\n` +
           `메시지: ${variables.message}`
       );
-      navigate("/");
+      navigate(ROUTES.ROOT);
     },
     onError: (error: AxiosError) => {
       if (error.response?.status === 401) {
-        navigate("/login");
+        navigate(ROUTES.LOGIN);
       }
     },
   });
