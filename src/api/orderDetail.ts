@@ -33,5 +33,5 @@ export async function fetchProductWishCount(
   productId: string
 ): Promise<ProductWishCount> {
   const response = await apiClient.get(`/api/products/${productId}/wish`);
-  return response.data.data;
+  return response.data;
 }

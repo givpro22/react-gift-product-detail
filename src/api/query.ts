@@ -34,6 +34,14 @@ export const useProductBasicSummary = (productId: string | undefined) => {
   });
 };
 
+export const useProductWishCount = (productId: string | undefined) => {
+  return useQuery({
+    queryKey: ["productWishCount", productId],
+    queryFn: () => fetchProductWishCount(productId!),
+    enabled: !!productId,
+  });
+};
+
 export const useProductTabSection = (productId: string) => {
   return useQueries({
     queries: [
