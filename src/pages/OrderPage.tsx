@@ -36,10 +36,10 @@ function OrderPage() {
     handleSubmit,
     formState: { errors },
   } = methods;
-  const mutation = useOrderMutation(productName, quantity, navigate);
+  const { mutate } = useOrderMutation(productName, quantity, navigate);
 
   const onSubmit = (data: FormValues) => {
-    mutation.mutate({
+    mutate({
       productId: Number(productId),
       message: data.message,
       messageCardId: selectedCardId,
