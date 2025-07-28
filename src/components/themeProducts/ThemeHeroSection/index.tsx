@@ -1,5 +1,3 @@
-import LoadingPage from "@/pages/LoadingPage";
-import { whiteSectionStyle } from "@/styles/CommonStyles";
 import { useParams, useNavigate } from "react-router-dom";
 import {
   sectionStyle,
@@ -16,7 +14,7 @@ function ThemeHeroSection() {
   const { themeId } = useParams<{ themeId: string }>();
   const navigate = useNavigate();
 
-  const { data, isError, isLoading, error } = useThemeInfoQuery(themeId);
+  const { data, error } = useThemeInfoQuery(themeId);
 
   useEffect(() => {
     if (!error) return;
@@ -26,10 +24,6 @@ function ThemeHeroSection() {
       navigate(ROUTES.ROOT);
     }
   }, [error, navigate]);
-
-  if (!data) return null;
-  if (isLoading) return <LoadingPage css={whiteSectionStyle()} />;
-  if (isError) return null;
 
   return (
     <section css={sectionStyle(data.backgroundColor)}>

@@ -1,8 +1,7 @@
-import { useQueries, useQuery } from "@tanstack/react-query";
+import { useSuspenseQueries, useSuspenseQuery } from "@tanstack/react-query";
 import { fetchThemeInfo } from "./themes";
 import { fetchProductSummary } from "./products";
-import type { ProductSummary } from "./products";
-import type { AxiosError } from "axios";
+
 import {
   fetchProductData,
   fetchProductDetailData,
@@ -11,39 +10,35 @@ import {
 } from "./orderDetail";
 
 export const useThemeInfoQuery = (themeId: string | undefined) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["themeInfo", themeId],
     queryFn: () => fetchThemeInfo(themeId!),
-    enabled: !!themeId,
   });
 };
 
 export const useProductSummaryQuery = (productId: string | undefined) => {
-  return useQuery<ProductSummary, AxiosError>({
+  return useSuspenseQuery({
     queryKey: ["productSummary", productId],
     queryFn: () => fetchProductSummary(productId!),
-    enabled: !!productId,
   });
 };
 
 export const useProductBasicSummary = (productId: string | undefined) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["productDetail", productId],
     queryFn: () => fetchProductData(productId!),
-    enabled: !!productId,
   });
 };
 
 export const useProductWishCount = (productId: string | undefined) => {
-  return useQuery({
+  return useSuspenseQuery({
     queryKey: ["productWishCount", productId],
     queryFn: () => fetchProductWishCount(productId!),
-    enabled: !!productId,
   });
 };
 
 export const useProductTabSection = (productId: string) => {
-  return useQueries({
+  return useSuspenseQueries({
     queries: [
       {
         queryKey: ["product", productId],

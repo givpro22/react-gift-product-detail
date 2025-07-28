@@ -14,8 +14,6 @@ function ProductBasicSummary() {
   const { productId } = useParams();
   const { data } = useProductBasicSummary(productId);
 
-  if (!data) return null;
-
   const { imageURL, name, price, brandInfo } = data.data;
 
   return (

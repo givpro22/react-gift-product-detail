@@ -10,14 +10,13 @@ import { QueryClientProvider } from "@tanstack/react-query";
 import { queryClient } from "./utils/query";
 import { ErrorBoundary } from "./utils/ErrorBoundary";
 import LoadingPage from "./pages/LoadingPage";
-import { whiteSectionStyle } from "./styles/CommonStyles";
 import NotFoundPage from "./pages/NotFoundPage";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <ErrorBoundary fallback={<NotFoundPage />}>
-      <Suspense fallback={<LoadingPage css={whiteSectionStyle()} />}>
-        <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary fallback={<NotFoundPage />}>
+        <Suspense fallback={<LoadingPage />}>
           <OrderFormProvider>
             <OrderProvider>
               <AuthProvider>
@@ -27,8 +26,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
               </AuthProvider>
             </OrderProvider>
           </OrderFormProvider>
-        </QueryClientProvider>
-      </Suspense>
-    </ErrorBoundary>
+        </Suspense>
+      </ErrorBoundary>
+    </QueryClientProvider>
   </React.StrictMode>
 );

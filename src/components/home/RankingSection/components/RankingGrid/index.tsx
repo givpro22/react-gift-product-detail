@@ -11,7 +11,7 @@ import {
 } from "./styles";
 import { fetchRankingProducts, type Product } from "@/api/products";
 import LoadingPage from "@/pages/LoadingPage";
-import { useQuery } from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import { AxiosError } from "axios";
 
 export default function RankingGrid() {
@@ -26,7 +26,7 @@ export default function RankingGrid() {
     isError,
     isLoading,
     error,
-  } = useQuery<Product[]>({
+  } = useSuspenseQuery<Product[]>({
     queryKey: ["rankingProducts", mainFilter, subFilter],
     queryFn: () => fetchRankingProducts({ mainFilter, subFilter }),
   });

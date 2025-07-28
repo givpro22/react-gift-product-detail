@@ -36,8 +36,6 @@ function ProductInfoSection() {
     }
   }, [product, setProductName, setProductPrice]);
 
-  if (!product) return null;
-
   return (
     <div css={whiteSectionStyle()}>
       <h3 css={titleStyle}>상품 정보</h3>

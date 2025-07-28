@@ -14,7 +14,6 @@ function ProductActionBar() {
   const navigate = useNavigate();
   const { mutate } = useUpdateWishCountMutation();
 
-  if (!data) return null;
   if (!productId) {
     return;
   }
