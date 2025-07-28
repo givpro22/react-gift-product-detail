@@ -31,7 +31,7 @@ export default function RankingGrid() {
     queryFn: () => fetchRankingProducts({ mainFilter, subFilter }),
   });
 
-  const handleItemClick = (id: number) => {
+  const handleItemClick = (id: number) => () => {
     navigate(`/product/${id}`);
   };
 
@@ -62,11 +62,7 @@ export default function RankingGrid() {
   return (
     <div css={gridStyle(theme)}>
       {data.map((item, index) => (
-        <div
-          key={item.id}
-          css={itemStyle}
-          onClick={() => handleItemClick(item.id)}
-        >
+        <div key={item.id} css={itemStyle} onClick={handleItemClick(item.id)}>
           <div css={rankStyle(theme)}>{index + 1}</div>
           <img src={item.imageURL} alt={item.name} css={imageStyle} />
           <div css={nameStyle(theme)}>{item.name}</div>

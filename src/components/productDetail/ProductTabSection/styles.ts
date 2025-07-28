@@ -49,13 +49,11 @@ export const descriptionStyle = css`
 `;
 
 export const announcementListStyle = css`
-  list-style: none;
   padding: 0;
   margin: 0;
 `;
 
 export const announcementItemStyle = css`
-  display: flex;
   margin-bottom: 8px;
 `;
 
