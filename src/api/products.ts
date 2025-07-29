@@ -63,6 +63,16 @@ export interface ProductSummary {
 export async function fetchProductSummary(
   productId: string
 ): Promise<ProductSummary> {
-  const response = await apiClient.get(`/api/products/${productId}/summary`);
-  return response.data.data;
+  try {
+    const response = await apiClient.get(`/api/products/${productId}/summary`);
+
+    const productData = response.data?.data;
+    if (!productData) {
+      throw new Error(`ID ${productId}에 해당하는 상품 요약 정보가 없습니다.`);
+    }
+
+    return productData;
+  } catch {
+    throw new Error(`상품 정보를 불러오는 중 문제가 발생했습니다.`);
+  }
 }

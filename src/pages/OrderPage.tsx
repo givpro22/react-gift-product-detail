@@ -12,6 +12,7 @@ import { useOrder } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cardData } from "@/mocks/orderCardData";
 import { useOrderMutation } from "@/api/mutations";
+import ApiErrorBoundary from "@/components/common/Error/ApiErrorBoundary";
 
 function OrderPage() {
   const formRef = useRef<HTMLFormElement>(null);
@@ -67,7 +68,9 @@ function OrderPage() {
         <HorizontalSpacing size="spacing3" />
         <ReceiverSection />
         <HorizontalSpacing size="spacing3" />
-        <ProductInfoSection />
+        <ApiErrorBoundary>
+          <ProductInfoSection />
+        </ApiErrorBoundary>
         <HorizontalSpacing size="spacing3" />
         <OrderSubmitBar formRef={formRef} />
       </form>

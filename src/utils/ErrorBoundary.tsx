@@ -24,7 +24,6 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
-    // 예: Sentry 등으로 로깅 가능
     console.error("Uncaught error:", error, errorInfo);
   }
 
