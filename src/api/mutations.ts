@@ -5,7 +5,6 @@ import type { AxiosError } from "axios";
 import type { NavigateFunction } from "react-router-dom";
 import type { UserInfo } from "@/api/auth";
 import { ROUTES } from "@/routes/Router";
-import axios from "axios";
 import type { ProductWishCount } from "@/types/orderDetailData";
 
 export const useOrderMutation = (
@@ -47,10 +46,7 @@ export const useUpdateWishCountMutation = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (productId: string) => {
-      // 낙관적 업데이트를 적용할 POST API가 없어 임시로 사용
-      return axios.post(`/api/products/${productId}/wish`, {});
-    },
+    mutationFn: async () => Promise.resolve(),
     onMutate: async (productId: string) => {
       await queryClient.cancelQueries({
         queryKey: ["productWishCount", productId],
