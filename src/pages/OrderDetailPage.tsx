@@ -9,12 +9,8 @@ function OrderDetailPage() {
     <>
       <ApiErrorBoundary>
         <ProductBasicSummary />
-      </ApiErrorBoundary>
-      <HorizontalSpacing size="spacing2" />
-      <ApiErrorBoundary>
+        <HorizontalSpacing size="spacing2" />
         <ProductTabSection />
-      </ApiErrorBoundary>
-      <ApiErrorBoundary>
         <ProductActionBar />
       </ApiErrorBoundary>
     </>

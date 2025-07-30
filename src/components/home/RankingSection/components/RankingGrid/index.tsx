@@ -7,12 +7,9 @@ import {
   imageStyle,
   nameStyle,
   emptyResultsStyle,
-  loadingContainerStyle,
 } from "./styles";
 import { fetchRankingProducts, type Product } from "@/api/products";
-import LoadingPage from "@/pages/LoadingPage";
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
 
 export default function RankingGrid() {
   const theme = useTheme();
@@ -21,12 +18,7 @@ export default function RankingGrid() {
 
   const mainFilter = searchParams.get("main");
   const subFilter = searchParams.get("sub");
-  const {
-    data = [],
-    isError,
-    isLoading,
-    error,
-  } = useSuspenseQuery<Product[]>({
+  const { data = [] } = useSuspenseQuery<Product[]>({
     queryKey: ["rankingProducts", mainFilter, subFilter],
     queryFn: () => fetchRankingProducts({ mainFilter, subFilter }),
   });
@@ -34,22 +26,6 @@ export default function RankingGrid() {
   const handleItemClick = (id: number) => () => {
     navigate(`/product/${id}`);
   };
-
-  if (isLoading) {
-    return <LoadingPage css={loadingContainerStyle(theme)} />;
-  }
-
-  if (isError) {
-    return (
-      <div css={emptyResultsStyle(theme)}>
-        <p>
-          {error instanceof AxiosError
-            ? error.response?.data?.message || "서버 에러 발생"
-            : "알 수 없는 에러가 발생했습니다."}
-        </p>
-      </div>
-    );
-  }
 
   if (data.length === 0) {
     return (

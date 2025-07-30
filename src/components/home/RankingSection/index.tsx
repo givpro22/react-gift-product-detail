@@ -3,8 +3,6 @@ import RankingFilterTabs from "@/components/home/RankingSection/components/Ranki
 import RankingSubFilterTabs from "@/components/home/RankingSection/components/RankingSubFilterTabs/index";
 import RankingGrid from "@/components/home/RankingSection/components/RankingGrid/index";
 import { whiteSectionStyle } from "@/styles/CommonStyles";
-import { Suspense } from "react";
-import LoadingPage from "@/pages/LoadingPage";
 
 export default function RankingSection() {
   return (
@@ -12,9 +10,7 @@ export default function RankingSection() {
       <RankingHeader />
       <RankingFilterTabs />
       <RankingSubFilterTabs />
-      <Suspense fallback={<LoadingPage />}>
-        <RankingGrid />
-      </Suspense>
+      <RankingGrid />
     </div>
   );
 }
