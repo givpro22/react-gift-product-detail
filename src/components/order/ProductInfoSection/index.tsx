@@ -1,5 +1,4 @@
-import { useParams, useNavigate } from "react-router-dom";
-import { toast } from "react-toastify";
+import { useParams } from "react-router-dom";
 import { whiteSectionStyle } from "@/styles/CommonStyles";
 import {
   titleStyle,
@@ -16,18 +15,10 @@ import { useProductSummaryQuery } from "@/api/query";
 
 function ProductInfoSection() {
   const { productId } = useParams();
-  const navigate = useNavigate();
 
   const { setProductPrice, setProductName } = useOrder();
 
-  const { data: product, error } = useProductSummaryQuery(productId);
-
-  useEffect(() => {
-    if (error) {
-      toast.error("상품 정보를 불러오지 못했습니다.");
-      navigate("/");
-    }
-  }, [error, navigate]);
+  const { data: product } = useProductSummaryQuery(productId);
 
   useEffect(() => {
     if (product) {
@@ -35,8 +26,6 @@ function ProductInfoSection() {
       setProductName(product.name);
     }
   }, [product, setProductName, setProductPrice]);
-
-  if (!product) return null;
 
   return (
     <div css={whiteSectionStyle()}>

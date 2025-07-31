@@ -1,6 +1,6 @@
 import { fetchThemeProducts } from "@/api/themes";
 import { useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   sectionStyle,
   gridStyle,
@@ -16,7 +16,7 @@ import { useInfiniteQuery } from "@tanstack/react-query";
 function ThemeProductList() {
   const { themeId } = useParams<{ themeId: string }>();
   const observerRef = useRef<HTMLDivElement | null>(null);
-
+  const navigate = useNavigate();
   const { data, fetchNextPage, hasNextPage, isFetchingNextPage, error } =
     useInfiniteQuery({
       queryKey: ["themeProducts", themeId],
@@ -27,6 +27,9 @@ function ThemeProductList() {
         lastPage.hasMoreList ? lastPage.cursor : undefined,
       enabled: !!themeId,
     });
+  const handleItemClick = (id: number) => () => {
+    navigate(`/product/${id}`);
+  };
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -53,7 +56,11 @@ function ThemeProductList() {
       <div css={gridStyle}>
         {data?.pages.flatMap((page) =>
           page.list.map((item) => (
-            <div key={item.id} css={cardStyle}>
+            <div
+              key={item.id}
+              css={cardStyle}
+              onClick={handleItemClick(item.id)}
+            >
               <img src={item.imageURL} alt={item.name} css={imageStyle} />
               <div css={brandStyle}>{item.brandInfo.name}</div>
               <div css={nameStyle}>{item.name}</div>

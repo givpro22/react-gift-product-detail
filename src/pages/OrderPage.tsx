@@ -12,11 +12,12 @@ import { useOrder } from "@/contexts/OrderContext";
 import { useAuth } from "@/contexts/AuthContext";
 import { cardData } from "@/mocks/orderCardData";
 import { useOrderMutation } from "@/api/mutations";
+import ApiErrorBoundary from "@/components/common/Error/ApiErrorBoundary";
 
 function OrderPage() {
   const formRef = useRef<HTMLFormElement>(null);
   const navigate = useNavigate();
-  const params = useParams();
+  const { productId } = useParams();
   const { user } = useAuth();
   const { productName, quantity } = useOrder();
   const [selectedCardId, setSelectedCardId] = useState<string>(
@@ -36,11 +37,11 @@ function OrderPage() {
     handleSubmit,
     formState: { errors },
   } = methods;
-  const mutation = useOrderMutation(productName, quantity, navigate);
+  const { mutate } = useOrderMutation(productName, quantity, navigate);
 
   const onSubmit = (data: FormValues) => {
-    mutation.mutate({
-      productId: Number(params.productId),
+    mutate({
+      productId: Number(productId),
       message: data.message,
       messageCardId: selectedCardId,
       ordererName: data.sender,
@@ -67,7 +68,9 @@ function OrderPage() {
         <HorizontalSpacing size="spacing3" />
         <ReceiverSection />
         <HorizontalSpacing size="spacing3" />
-        <ProductInfoSection />
+        <ApiErrorBoundary>
+          <ProductInfoSection />
+        </ApiErrorBoundary>
         <HorizontalSpacing size="spacing3" />
         <OrderSubmitBar formRef={formRef} />
       </form>

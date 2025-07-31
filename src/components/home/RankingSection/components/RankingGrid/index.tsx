@@ -7,55 +7,25 @@ import {
   imageStyle,
   nameStyle,
   emptyResultsStyle,
-  loadingContainerStyle,
 } from "./styles";
-import { useAuth } from "@/contexts/AuthContext";
 import { fetchRankingProducts, type Product } from "@/api/products";
-import LoadingPage from "@/pages/LoadingPage";
-import { useQuery } from "@tanstack/react-query";
-import { AxiosError } from "axios";
+import { useSuspenseQuery } from "@tanstack/react-query";
 
 export default function RankingGrid() {
   const theme = useTheme();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user } = useAuth();
 
   const mainFilter = searchParams.get("main");
   const subFilter = searchParams.get("sub");
-  const {
-    data = [],
-    isError,
-    isLoading,
-    error,
-  } = useQuery<Product[]>({
+  const { data = [] } = useSuspenseQuery<Product[]>({
     queryKey: ["rankingProducts", mainFilter, subFilter],
     queryFn: () => fetchRankingProducts({ mainFilter, subFilter }),
   });
 
-  const handleItemClick = (id: number) => {
-    if (user) {
-      navigate(`/order/${id}`);
-    } else {
-      navigate("/login", { state: { from: `/order/${id}` } });
-    }
+  const handleItemClick = (id: number) => () => {
+    navigate(`/product/${id}`);
   };
-
-  if (isLoading) {
-    return <LoadingPage css={loadingContainerStyle(theme)} />;
-  }
-
-  if (isError) {
-    return (
-      <div css={emptyResultsStyle(theme)}>
-        <p>
-          {error instanceof AxiosError
-            ? error.response?.data?.message || "서버 에러 발생"
-            : "알 수 없는 에러가 발생했습니다."}
-        </p>
-      </div>
-    );
-  }
 
   if (data.length === 0) {
     return (
@@ -68,11 +38,7 @@ export default function RankingGrid() {
   return (
     <div css={gridStyle(theme)}>
       {data.map((item, index) => (
-        <div
-          key={item.id}
-          css={itemStyle}
-          onClick={() => handleItemClick(item.id)}
-        >
+        <div key={item.id} css={itemStyle} onClick={handleItemClick(item.id)}>
           <div css={rankStyle(theme)}>{index + 1}</div>
           <img src={item.imageURL} alt={item.name} css={imageStyle} />
           <div css={nameStyle(theme)}>{item.name}</div>
